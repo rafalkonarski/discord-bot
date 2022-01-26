@@ -1,3 +1,4 @@
+discord==1.7.3
 discord.py==1.7.3
 pip==21.1.2
 praw==7.5.0

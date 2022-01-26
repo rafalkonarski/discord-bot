@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import random
 import praw
+import requests
 import os
 import asyncio
 
@@ -50,24 +51,17 @@ async def memes(ctx):
     await ctx.send(submission.url)
 
 #reddit random jokes
-@client.event
-async def on_message(message):
-    if message.channel.id == 935898462443151391:
-        if message.content.startswith(".joke"):
-            subreddit = reddit.subreddit("jokes")
-            all_subs = []
-            top = subreddit.top(limit=50)
+@client.command()
+async def jokes(ctx):
+    ctx = client.get_channel(935898462443151391)
+    memes_subsmissions = reddit.subreddit('jokes').hot()
+    post_to_pick = random.randint(1,20)
+    for i in range(0, post_to_pick):
+        submission = next(x for x in memes_subsmissions if not x.stickied)
 
-            for submission in top:
-                all_subs.append(submission)
+    await ctx.send(submission.selftext)
+    await ctx.send(submission.url)
 
-            random_sub = random.choice(all_subs)
-            name = random_sub.title
-            url = random_sub.url
-            text = random_sub.selftext
-            em = discord.Embed(title=name, color=0xFF5733, description=text)
-
-            await message.channel.send(embed=em)
 
 #bot clear messages
 @client.command()
@@ -118,5 +112,6 @@ async def join(ctx):
         await voice.move_to(channel)
     else:
         voice = await channel.connect()
+
 
 client.run('OTA3NzQ2OTgzMTUyODQ4OTM2.YYrrQQ.tbcCzupJ2sUUuEGfpB5FcHh41_E')
