@@ -9,6 +9,9 @@ import asyncio
 #prefix for bot
 client = commands.Bot(command_prefix='.')
 
+api_key = "d0d1c8f0f78774930da40b6bc6ffdd3e"
+base_url = "http://api.openweathermap.org/data/2.5/weather?"
+
 #bot online status
 @client.event
 async def on_ready():
@@ -23,7 +26,7 @@ reddit = praw.Reddit(client_id='d5_6ppUPupU6Ql23A9i0uw',
 
 #bot hits designated user
 punch_gifs = ['https://c.tenor.com/CRl-iJT02YIAAAAC/naruto-nine-tails.gif']
-punch_names = ['Punches You!']
+punch_names = ['Punches you!']
 @client.command()
 async def punch(ctx):
     embed = discord.Embed(
@@ -42,9 +45,9 @@ async def ping(ctx):
 #reddit meme bot
 @client.command()
 async def memes(ctx):
-    ctx = client.get_channel(933762162936139886)
-    memes_subsmissions = reddit.subreddit('memes').hot()
-    post_to_pick = random.randint(1,20)
+    ctx = client.get_channel(935935329758765186)
+    memes_subsmissions = reddit.subreddit('overwatch_memes').hot()
+    post_to_pick = random.randint(1,50)
     for i in range(0, post_to_pick):
         submission = next(x for x in memes_subsmissions if not x.stickied)
 
@@ -53,20 +56,19 @@ async def memes(ctx):
 #reddit random jokes
 @client.command()
 async def jokes(ctx):
-    ctx = client.get_channel(935898462443151391)
+    ctx = client.get_channel(935935329758765186)
     memes_subsmissions = reddit.subreddit('jokes').hot()
     post_to_pick = random.randint(1,20)
     for i in range(0, post_to_pick):
         submission = next(x for x in memes_subsmissions if not x.stickied)
 
     await ctx.send(submission.selftext)
-    await ctx.send(submission.url)
 
 
 #bot clear messages
 @client.command()
 async def clear(ctx, amount=5):
-    await ctx.channel.purge(limit=amount)
+    await ctx.channel.purge(limit=amount) 
 
 #giving any arguments
 @client.command()
@@ -102,6 +104,47 @@ async def eightball(ctx, *, question):
                  "What you want from me?",
                  "I don't have time now, try again later."]
     await ctx.send(f':8ball: Question:  {question}\n:8ball: Answer: {random.choice(responses)}')
+
+#bot shows the weather in selected city
+@client.command()
+async def weather(ctx, *, city: str):
+        city_name = city
+        complete_url = base_url + "appid=" + api_key + "&q=" + city_name
+        response = requests.get(complete_url)
+        x = response.json()
+        channel = ctx.message.channel
+        if x["cod"] != "404":
+                y = x["main"]
+                current_temperature = y["temp"]
+                current_temperature_celsiuis = str(round(current_temperature - 273.15))
+                current_pressure = y["pressure"]
+                current_humidity = y["humidity"]
+                z = x["weather"]
+                weather_description = z[0]["description"]
+                embed = discord.Embed(
+                    title=f"WEATHER FORECAST - {city_name}",
+                    color=0x7289DA,
+                    timestamp=ctx.message.created_at,
+                )
+                embed.add_field(
+                    name="DESCRIPTION",
+                    value=f"**{weather_description}**",
+                    inline=False)
+                embed.add_field(
+                    name="TEMPERATURE(C)",
+                    value=f"**{current_temperature_celsiuis}°C**",
+                    inline=False)
+                embed.add_field(
+                    name="HUMIDITY(%)", value=f"**{current_humidity}%**", inline=False)
+                embed.add_field(
+                    name="ATMOSPHERIC PRESSURE(hPa)",
+                    value=f"**{current_pressure}hPa**",
+                    inline=False)
+                embed.set_footer(text=f"Requested by {ctx.author.name}")
+                await channel.send(embed=embed)
+        else:
+                await channel.send(f"There was no results about this place!")
+
 
 #bot join to the channel
 @client.command()
