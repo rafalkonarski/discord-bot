@@ -157,4 +157,4 @@ async def join(ctx):
         voice = await channel.connect()
 
 
-client.run('OTM1OTM1Mzk3MTc3OTk1MzU2.GQRguK.5N5B3ZPzn8pXzlQ73hUcRidFhTHBKVMYLpHJuA')
+client.run('')
