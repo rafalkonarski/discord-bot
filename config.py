@@ -4,13 +4,10 @@ import random
 import praw
 import os
 from discord.ext import commands
-from wavelink import Client
 from dotenv import load_dotenv
 
 #prefix for bot
 client = commands.Bot(command_prefix='.')
-wavelink = Client(client=client)
-
 api_key = "d0d1c8f0f78774930da40b6bc6ffdd3e"
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
 players = {}
@@ -163,36 +160,7 @@ async def mute_error(ctx, error):
         await ctx.send("Please mention a user to mute.")
 
 #youtube aha ok
-@client.command()
-async def join(ctx):
-    channel = ctx.author.voice.channel
-    player = wavelink.get_player(ctx.guild.id)
-    await player.connect(channel.id)
 
-@client.command()
-async def play(ctx, url):
-    player = wavelink.get_player(ctx.guild.id)
-    track = await player.get_track(url)
-    await player.play(track)
-@client.command()
-async def pause(ctx):
-    player = wavelink.get_player(ctx.guild.id)
-
-    if player.is_playing:
-        await player.set_pause(True)
-        await ctx.send("Music paused.")
-    else:
-        await ctx.send("No music is playing to pause.")
-@client.command()
-async def stop(ctx):
-    player = wavelink.get_player(ctx.guild.id)
-
-    if player.is_connected:
-        await player.stop()
-        await player.disconnect()
-        await ctx.send("Music stopped and bot disconnected.")
-    else:
-        await ctx.send("The bot is not connected to a voice channel.")
 
 load_dotenv()
 client.run(os.getenv('TOKEN'))
