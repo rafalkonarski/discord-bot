@@ -163,4 +163,4 @@ async def mute_error(ctx, error):
 
 
 load_dotenv()
-#client.run(os.getenv('TOKEN'))
+client.run(os.getenv('TOKEN'))
