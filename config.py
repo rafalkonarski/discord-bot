@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 #prefix for bot
 prefix = "."
-needed_intents = discord.Intents.default()
+needed_intents = discord.Intents(messages=True, message_content=True, guilds=True, guild_messages=True)
 client = commands.Bot(command_prefix=prefix, intents=needed_intents)
 api_key = "d0d1c8f0f78774930da40b6bc6ffdd3e"
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
