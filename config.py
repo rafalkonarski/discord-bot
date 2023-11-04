@@ -42,6 +42,10 @@ async def punch(ctx):
 async def ping(ctx):
     await ctx.send(f'Pong!')
 
+@client.command()
+async def bargol(ctx):
+    await ctx.send(f'to kurwa!')
+
 #reddit meme bot
 @client.command()
 async def memes(ctx):
