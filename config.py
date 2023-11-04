@@ -167,5 +167,5 @@ async def mute_error(ctx, error):
 
 #youtube aha ok
 
-load_dotenv()
-client.run(os.getenv('TOKEN'))
+#load_dotenv()
+#client.run(os.getenv('TOKEN'))
