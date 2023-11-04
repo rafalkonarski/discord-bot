@@ -7,7 +7,9 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 #prefix for bot
-client = commands.Bot(command_prefix='.')
+prefix = "."
+needed_intents = discord.Intents.default()
+client = commands.Bot(command_prefix=prefix, intents=needed_intents)
 api_key = "d0d1c8f0f78774930da40b6bc6ffdd3e"
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
 players = {}
@@ -160,7 +162,6 @@ async def mute_error(ctx, error):
         await ctx.send("Please mention a user to mute.")
 
 #youtube aha ok
-
 
 load_dotenv()
 client.run(os.getenv('TOKEN'))
