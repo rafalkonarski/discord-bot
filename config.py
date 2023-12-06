@@ -210,5 +210,5 @@ async def stop(ctx):
     if voice_channel and voice_channel.is_playing():
         voice_channel.stop()
 
-load_dotenv()
-client.run(os.getenv('TOKEN'))
+#load_dotenv()
+#client.run(os.getenv('TOKEN'))
