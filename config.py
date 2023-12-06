@@ -5,10 +5,11 @@ import praw
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
+import youtube_dl
 
 #prefix for bot
 prefix = "."
-needed_intents = discord.Intents(messages=True, message_content=True, guilds=True, guild_messages=True)
+needed_intents = discord.Intents.all()
 client = commands.Bot(command_prefix=prefix, intents=needed_intents)
 api_key = "d0d1c8f0f78774930da40b6bc6ffdd3e"
 base_url = "http://api.openweathermap.org/data/2.5/weather?"
@@ -123,17 +124,17 @@ async def weather(ctx, *, city: str):
                 await channel.send(f"There was no results about this place!")
 """
 
-"""
+
 #bot join to the channel
 @client.command()
 async def join(ctx):
     channel = ctx.message.author.voice.channel
-    voice = get(client.voice_clients, guild=ctx.guild)
+    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+
     if voice and voice.is_connected():
         await voice.move_to(channel)
     else:
         voice = await channel.connect()
-"""
 
 #bot mute another user
 @client.command()
@@ -166,6 +167,48 @@ async def mute_error(ctx, error):
         await ctx.send("Please mention a user to mute.")
 
 #youtube aha ok
+@client.command()
+async def leave(ctx):
+    await ctx.voice_client.disconnect()
+
+@client.command()
+async def play(ctx, url):
+    voice_channel = discord.utils.get(client.voice_clients, guild=ctx.guild)
+
+    if not voice_channel or not voice_channel.is_connected():
+        await ctx.send("Not connected to a voice channel. Use !join to connect.")
+        return
+
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'postprocessor_args': [
+            '-ar', '44100',
+            '-ac', '2',
+            '-b:a', '192k',
+        ],
+        'prefer_ffmpeg': True,
+        'keepvideo': False,
+        'outtmpl': 'downloads/%(title)s.%(ext)s',
+        'verbose': True,  # Add this line for verbose output
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=False)
+        url2 = info['formats'][0]['url']
+
+        voice_channel.play(discord.FFmpegPCMAudio(url2), after=lambda e: print('done', e))
+
+@client.command()
+async def stop(ctx):
+    voice_channel = discord.utils.get(client.voice_clients, guild=ctx.guild)
+
+    if voice_channel and voice_channel.is_playing():
+        voice_channel.stop()
 
 load_dotenv()
 client.run(os.getenv('TOKEN'))

@@ -7,3 +7,6 @@ requests
 async
 wavelink
 yt-dlp
+pynacl
+discord-py-music
+youtube_dl
